@@ -34,18 +34,30 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
   app.get("/filteredimage", async (req, res) => {
     let { image_url } = req.query;
     let regex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
+    console.log("1.validate the image_url query");
     if (!image_url.match(regex)) {
       return res.status(400)
         .send(`Image Path not valid!`);
     }
+    console.log("2.call filterImageFromURL(image_url) to filter the image");
     filterImageFromURL(image_url).then((data) => {
-      res.status(200).sendFile(data);
-      setTimeout(() => {
-        deleteLocalFiles([data]);
-        console.log(`deletes file: ` + data +  ` on the server on finish of the response`);
-      }, 2000);
-      
+      console.log("3.send the resulting file in the response");
+      res.status(200).sendFile(data, function (error) {
+        if (error) {
+          console.log(`loading file have error: ` + error);
+        } else {
+          console.log("4. deletes any files on the server on finish of the response");
+          deleteLocalFiles([data]);
+          console.log(`-------------FINISHED: deleted file: ` + data);
+        }
+      });
+    }).catch(() => {
+      console.log(`-------------ERROR: try others------------- `);
+      return res.status(400).send(`Could not read image. Please try new one.<br> Example: https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Sacred_lotus_Nelumbo_nucifera.jpg/640px-Sacred_lotus_Nelumbo_nucifera.jpg`
+      )
+      ;
     })
+
   });
 
   // Root Endpoint
