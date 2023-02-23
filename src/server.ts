@@ -48,7 +48,7 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
         } else {
           console.log("4. deletes any files on the server on finish of the response");
           deleteLocalFiles([data]);
-          console.log(`-------------FINISHED: deleted file: ` + data);
+          console.log(`-----------FINISHED: deleted file: ` + data);
         }
       });
     }).catch(() => {
