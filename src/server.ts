@@ -35,12 +35,12 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
     let { image_url } = req.query;
     let regex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
     console.log("1.validate the image_url query");
-    if (!image_url.match(regex)) {
+    if (!image_url.toString().match(regex)) {
       return res.status(400)
         .send(`Image Path not valid!`);
     }
     console.log("2.call filterImageFromURL(image_url) to filter the image");
-    filterImageFromURL(image_url).then((data) => {
+    filterImageFromURL(image_url.toString()).then((data) => {
       console.log("3.send the resulting file in the response");
       res.status(200).sendFile(data, function (error) {
         if (error) {
